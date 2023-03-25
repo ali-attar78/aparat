@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('video_tags', function (Blueprint $table) {
+            $table->engine='InnoDB';
             $table->id();
             $table->unsignedBigInteger('video_id');
             $table->unsignedBigInteger('tag_id');
