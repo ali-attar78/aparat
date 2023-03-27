@@ -12,15 +12,26 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    const TYPE_ADMIN ='admin';
+    const TYPE_USER ='user ';
+    const TYPES =[self::TYPE_ADMIN,self::TYPE_USER];
+
+    protected $table='users';
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
         'email',
+        'type',
+        'mobile',
+        'name',
         'password',
+        'avatar',
+        'website',
+        'verified_code',
+        'verify_at'
     ];
 
     /**
@@ -30,7 +41,7 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
-        'remember_token',
+        'verified_code',
     ];
 
     /**
@@ -39,6 +50,14 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        'email_verified_at' => 'verify_at',
     ];
+
+    public function findForPassport($username)
+    {
+        $user= static::where('mobile',$username)->orWhere('email',$username)->first();
+        return $user;
+    }
+
+
 }

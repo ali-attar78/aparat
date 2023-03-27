@@ -37,7 +37,7 @@ return [
 
     'guards' => [
         'web' => [
-            'driver' => 'session',
+            'driver' => 'passport',
             'provider' => 'users',
         ],
     ],
@@ -97,6 +97,11 @@ return [
             'expire' => 60,
             'throttle' => 60,
         ],
+    ],
+
+    'token_expiration' =>[
+        'token' => env('EXPIRATION_TOKEN',14400),
+        'refresh_token' => env('EXPIRATION_TOKEN',43200)
     ],
 
     /*
