@@ -16,13 +16,13 @@ return new class extends Migration
             $table->id();
             $table->string('email',100)->unique()->nullable();
             $table->string('mobile',13)->unique()->nullable();
-            $table->string('name',100);
-            $table->string('password',100);
+            $table->string('name',100)->nullable();
+            $table->string('password',100)->nullable();
             $table->enum('type',\App\Models\User::TYPES)->default(\App\Models\User::TYPE_USER);
             $table->string('avatar',100)->nullable();
             $table->string('website')->nullable();
-            $table->string('verified_code',6)->nullable();
-            $table->timestamp('verify_at')->nullable();
+            $table->string('verify_code',6)->nullable();
+            $table->timestamp('verified_at')->nullable();
             $table->timestamps();
 
         });

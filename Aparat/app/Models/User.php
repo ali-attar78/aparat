@@ -30,8 +30,8 @@ class User extends Authenticatable
         'password',
         'avatar',
         'website',
-        'verified_code',
-        'verify_at'
+        'verify_code',
+        'verified_at'
     ];
 
     /**

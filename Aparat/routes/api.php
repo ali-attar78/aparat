@@ -28,6 +28,8 @@ Route::group(['namespace' => 'Laravel\Passport\Http\Controllers'],function ($rou
 
 Route::post('register', [AuthController::class, 'register'])->name('auth.register');
 
+Route::post('register-verify', [AuthController::class, 'registerVerify'])->name('auth.register-verify');
+
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
