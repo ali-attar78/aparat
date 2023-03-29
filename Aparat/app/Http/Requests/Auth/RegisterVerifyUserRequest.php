@@ -2,10 +2,15 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Rules\MobileRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RegisterVerifyUserRequest extends FormRequest
 {
+
+    use GetRegisterFieldAndValueTrait;
+
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -23,8 +28,12 @@ class RegisterVerifyUserRequest extends FormRequest
     {
         return [
             'code'=>'required|string',
-            'mobile'=>'required_without:email',
+            'mobile'=>['required_without:email',new MobileRule],
             'email'=>'required_without:mobile|email',
         ];
     }
+
+
+
+
 }

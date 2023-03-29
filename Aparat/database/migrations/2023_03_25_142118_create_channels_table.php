@@ -15,7 +15,8 @@ return new class extends Migration
             $table->engine='InnoDB';
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->text('info');
+            $table->string('name');
+            $table->text('info')->nullable();
             $table->string('banner')->nullable();
             $table->string('socials')->nullable();
             $table->timestamps();

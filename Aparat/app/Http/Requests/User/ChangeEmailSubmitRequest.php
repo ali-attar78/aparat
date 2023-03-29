@@ -1,14 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Auth;
+namespace App\Http\Requests\User;
 
-use App\Rules\MobileRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterNewUserRequest extends FormRequest
+class ChangeEmailSubmitRequest extends FormRequest
 {
-    use GetRegisterFieldAndValueTrait;
-
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -25,11 +22,9 @@ class RegisterNewUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'mobile'=>['required_without:email',new MobileRule],
-            'email'=>'required_without:mobile|email',
+
+             'code'=> 'required|string'
+
         ];
     }
-
-
-
 }

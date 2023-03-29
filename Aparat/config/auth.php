@@ -40,6 +40,10 @@ return [
             'driver' => 'passport',
             'provider' => 'users',
         ],
+        'api' => [
+            'driver' => 'passport',
+            'provider' => 'users',
+        ],
     ],
 
     /*
@@ -101,10 +105,12 @@ return [
 
     'token_expiration' =>[
         'token' => env('EXPIRATION_TOKEN',14400),
-        'refresh_token' => env('EXPIRATION_TOKEN',43200)
+        'refresh_token' => env('EXPIRATION_REFRESH_TOKEN',43200)
     ],
 
-    'register_cache_expiration'=> env('EXPIRATION_REGISTER_CACHE',14400),
+    'change_email_cache_expiration'=> env('EXPIRATION_CHANGE_EMAIL_CACHE',14400),
+
+    'resend_verification_code_diff_in_minutes' =>env('RESEND_VERIFICATION_CODE_TIME_DIFF',6),
     /*
     |--------------------------------------------------------------------------
     | Password Confirmation Timeout
