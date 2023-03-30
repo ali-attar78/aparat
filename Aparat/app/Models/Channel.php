@@ -12,4 +12,10 @@ class Channel extends Model
     protected $table='channels';
     protected $fillable=['user_id','name','info','banner','socials'];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+
 }
