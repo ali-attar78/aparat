@@ -37,4 +37,9 @@ namespace App\Services;
 
 
      }
+
+     public static function create(CreateVideoRequest $request)
+     {
+         dd($request->all());
+     }
  }

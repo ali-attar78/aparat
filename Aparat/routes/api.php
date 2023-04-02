@@ -65,7 +65,9 @@ Route::group(['prefix'=>'/channel'],function ($router){
 
 Route::group(['prefix'=>'/video'],function ($router){
 
-    $router->post('/', [VideoController::class, 'upload'])->middleware('auth:api')->name('video.upload'); //['auth:api']
+    $router->post('/upload', [VideoController::class, 'upload'])->middleware('auth:api')->name('video.upload');
+
+    $router->post('/', [VideoController::class, 'create'])->middleware('auth:api')->name('video.create');
 
 
 

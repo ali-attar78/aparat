@@ -13,6 +13,9 @@ class UsersTableSeeder extends Seeder
      */
     public function run(): void
     {
+        if(User::count()){
+            return;
+        }
         $this->createAdminUser();
         $this->createUser();
     }

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Video\CreateVideoRequest;
 use App\Http\Requests\Video\UploadVideoRequest;
 use App\Services\VideoService;
-use Illuminate\Http\Request;
 
 class VideoController extends Controller
 {
@@ -12,4 +12,10 @@ class VideoController extends Controller
     {
         return VideoService::upload($request);
     }
+
+    public function create(CreateVideoRequest $request)
+    {
+        return VideoService::create($request);
+    }
+
 }
