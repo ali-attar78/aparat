@@ -8,12 +8,14 @@ namespace App\Services;
  use App\Http\Requests\Auth\ResendVerificationCodeRequest;
  use App\Http\Requests\User\ChangeEmailRequest;
  use App\Http\Requests\User\ChangeEmailSubmitRequest;
+ use App\Http\Requests\User\ChangePasswordRequest;
  use App\Models\User;
  use Illuminate\Database\Eloquent\ModelNotFoundException;
  use Illuminate\Support\Facades\Cache;
  use Illuminate\Support\Facades\DB;
  use Illuminate\Support\Facades\Log;
  use mysql_xdevapi\Exception;
+ use Illuminate\Support\Facades\Hash;
 
  class UserService extends BaseService
 {
@@ -165,5 +167,27 @@ namespace App\Services;
 
 
      }
+
+     public static function changePassword(ChangePasswordRequest $request)
+     {
+
+         try {
+             $user = auth()->user();
+             if (!Hash::check($request->old_password, $user->password)) {
+                 return response(['message' => 'گذر واژه وارد شده مطابقت ندارد'], 400);
+             }
+
+             $user->password = bcrypt($request->new_password);
+             $user->save();
+             return response(['message' => 'تغییر پسوورد با موفقیت انجام شد'], 200);
+         }
+         catch (Exception $exception){
+             Log::error($exception);
+             return response(['message' => 'خطایی رخ داده است'], 500);
+
+         }
+
+     }
+
 
  }

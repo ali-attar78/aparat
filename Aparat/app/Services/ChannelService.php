@@ -3,6 +3,7 @@
 namespace App\Services;
 
  use App\Http\Requests\Channel\UpdateChannelRequest;
+ use App\Http\Requests\Channel\UpdateSocialsRequest;
  use App\Http\Requests\Channel\UploadBannerForChannelRequest;
  use App\Models\Channel;
  use App\Models\User;
@@ -86,6 +87,33 @@ namespace App\Services;
              return response([
                  'message'=>'خطایی رخ داده است'
              ],500);
+         }
+     }
+
+     public static function updateSocials(UpdateSocialsRequest $request)
+     {
+         try {
+
+             $socials = [
+
+                 'cloob' => $request->input('cloob'),
+                 'lenzo' => $request->input('lenzo'),
+                 'facebook' => $request->input('facebook'),
+                 'twitter' => $request->input('twitter'),
+                 'telegram' => $request->input('telegram')
+
+             ];
+
+             $channel = auth()->user()->channel;
+             $channel->update(['socials' => json_encode($socials)]);
+
+             return response(["message" => "با موفقیت انجام شد"], 200);
+
+         }
+         catch (Exception $exception){
+             Log::error($exception);
+             return response(["message" => "خطایی رخ داده است"], 500);
+
          }
      }
 

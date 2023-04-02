@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Channel\UpdateChannelRequest;
+use App\Http\Requests\Channel\UpdateSocialsRequest;
 use App\Http\Requests\Channel\UploadBannerForChannelRequest;
 use App\Services\ChannelService;
 
@@ -17,4 +18,10 @@ class ChannelController extends Controller
     {
          return ChannelService::uploadAvatarForChannel($request);
     }
+
+    public function updateSocials(UpdateSocialsRequest $request)
+    {
+        return ChannelService::updateSocials($request);
+    }
+
 }

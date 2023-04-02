@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\User\ChangeEmailRequest;
 use App\Http\Requests\User\ChangeEmailSubmitRequest;
+use App\Http\Requests\User\ChangePasswordRequest;
 use App\Services\UserService;
 use http\Env\Response;
 use Illuminate\Http\Request;
@@ -23,6 +24,11 @@ class UserController extends Controller
     public function changeEmailSubmit(ChangeEmailSubmitRequest $request)
     {
         return UserService::changeEmailSubmit($request);
+    }
+
+    public function changePassword(ChangePasswordRequest $request)
+    {
+        return UserService::changePassword($request);
     }
 
 }

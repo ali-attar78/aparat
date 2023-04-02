@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ChannelController;
+use App\Http\Controllers\VideoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -46,6 +47,9 @@ Route::group([],function ($router){
 
     $router->post('change-email-submit', [UserController::class, 'changeEmailSubmit'])->middleware('auth:api')->name('change.email.submit'); //['auth:api']
 
+    $router->match(['post', 'put'], 'change-password', [UserController::class, 'changePassword'])->middleware('auth:api')->name('password.change');
+
+
 });
 
 Route::group(['prefix'=>'/channel'],function ($router){
@@ -54,8 +58,18 @@ Route::group(['prefix'=>'/channel'],function ($router){
 
     $router->match(['post', 'put'], '/', [ChannelController::class, 'uploadBanner'])->middleware('auth:api')->name('channel.upload.banner');
 
+    $router->match(['post', 'put'], '/socials', [ChannelController::class, 'updateSocials'])->middleware('auth:api')->name('channel.update.socials');
+
+
 });
 
+Route::group(['prefix'=>'/video'],function ($router){
+
+    $router->post('/', [VideoController::class, 'upload'])->middleware('auth:api')->name('video.upload'); //['auth:api']
+
+
+
+});
 
 
 
