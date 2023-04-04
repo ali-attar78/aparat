@@ -57,6 +57,12 @@ return [
             'throw' => false,
         ],
 
+        'videos' => [
+            'driver' => 'local',
+            'root' => public_path('videos'),
+            'throw' => false,
+        ],
+
     ],
 
     /*

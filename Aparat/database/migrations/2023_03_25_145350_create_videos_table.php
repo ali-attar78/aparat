@@ -19,6 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('channel_category_id');
             $table->string('slug',50);
             $table->text('title')->nullable();
+            $table->text('info')->nullable();
             $table->integer('duration');
             $table->string('banner')->nullable();
             $table->timestamp('publish_at')->nullable();
