@@ -63,6 +63,13 @@ return [
             'throw' => false,
         ],
 
+        'category' => [
+            'driver' => 'local',
+            'root' => public_path('category'),
+            'throw' => false,
+        ],
+
+
     ],
 
     /*

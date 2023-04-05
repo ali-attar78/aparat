@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Storage;
 
-class UploadedVideoBannerId implements ValidationRule
+class UploadedCategoryBannerId implements ValidationRule
 {
     /**
      * Run the validation rule.
@@ -15,9 +15,9 @@ class UploadedVideoBannerId implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $idExist = Storage::disk('videos')->exists('tmp/' . $value);
+        $idExist = Storage::disk('category')->exists('tmp/' . $value);
         if(!$idExist){
-            $fail('invalid video banner id');
+            $fail('invalid category banner id');
         }
     }
 }

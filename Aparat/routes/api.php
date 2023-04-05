@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ChannelController;
 use App\Http\Controllers\VideoController;
 use Illuminate\Http\Request;
@@ -72,6 +73,18 @@ Route::group(['prefix'=>'/video'],function ($router){
     $router->post('/', [VideoController::class, 'create'])->middleware('auth:api')->name('video.create');
 
 
+
+});
+
+Route::group(['prefix'=>'/category'],function ($router){
+
+    $router->get('/', [CategoryController::class, 'index'])->middleware('auth:api')->name('category.all');
+
+     $router->get('/my', [CategoryController::class, 'my'])->middleware('auth:api')->name('category.my');
+
+    $router->post('/create', [CategoryController::class, 'create'])->middleware('auth:api')->name('category.create');
+
+    $router->post('/upload-banner', [CategoryController::class, 'uploadBanner'])->middleware('auth:api')->name('category.upload.banner');
 
 });
 

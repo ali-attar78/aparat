@@ -70,6 +70,12 @@ class User extends Authenticatable
       return $this->hasOne(Channel::class);
     }
 
+    public function categories(){
+        return $this->hasMany(Category::class);
+    }
+
+
+
 
 
 

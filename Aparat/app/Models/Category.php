@@ -11,4 +11,8 @@ class Category extends Model
 
     protected $table= 'categories';
     protected $fillable = ['title','icon','banner','user_id'];
+
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
 }
