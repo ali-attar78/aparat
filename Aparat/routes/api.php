@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ChannelController;
+use App\Http\Controllers\PlaylistController;
+use App\Http\Controllers\TagController;
 use App\Http\Controllers\VideoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -87,6 +89,27 @@ Route::group(['prefix'=>'/category'],function ($router){
     $router->post('/upload-banner', [CategoryController::class, 'uploadBanner'])->middleware('auth:api')->name('category.upload.banner');
 
 });
+
+
+
+Route::group(['prefix'=>'/playlist'],function ($router){
+
+    $router->get('/', [PlaylistController::class, 'index'])->middleware('auth:api')->name('playlist.all');
+
+    $router->get('/my', [PlaylistController::class, 'my'])->middleware('auth:api')->name('playlist.my');
+
+    $router->post('/create', [PlaylistController::class, 'create'])->middleware('auth:api')->name('playlist.create');
+
+});
+
+Route::group(['prefix'=>'/tag'],function ($router){
+
+    $router->get('/', [TagController::class, 'index'])->middleware('auth:api')->name('tags.all');
+
+    $router->post('/create', [TagController::class, 'create'])->middleware('auth:api')->name('tags.create');
+
+});
+
 
 
 

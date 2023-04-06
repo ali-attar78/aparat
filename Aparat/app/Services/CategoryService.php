@@ -45,7 +45,7 @@ namespace App\Services;
              $category = $user->categories()->create($data);
 
              DB::commit();
-             return response(['data' => $category],200);
+             return response($category,200);
 
          }
          catch (Exception $exception){
@@ -74,6 +74,8 @@ namespace App\Services;
                  'message'=>'خطایی رخ داده است'
              ],500);
          }     }
+
+
 
 
  }
