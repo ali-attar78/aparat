@@ -10,6 +10,8 @@ namespace App\Services;
  use App\Models\Playlist;
  use App\Models\Video;
  use FFMpeg\FFMpeg;
+ use FFMpeg\Filters\Video\CustomFilter;
+ use FFMpeg\Filters\Video\VideoFilters;
  use Illuminate\Support\Facades\DB;
  use Illuminate\Support\Facades\Log;
  use Illuminate\Support\Facades\Storage;
@@ -48,7 +50,18 @@ namespace App\Services;
 
 
              /** @var Media $video */
-             $video = \FFM::fromDisk('videos')->open('/tmp/' . $request->video_id);
+             $upladedVideoPath='/tmp/' . $request->video_id;
+             $video = \FFM::fromDisk('videos')->open($upladedVideoPath);
+
+             $filter=new CustomFilter("drawtext=text='http\\://aliattar.com'
+             :fontcolor=white:fontsize=30:box=1:boxcolor=white@0.5");
+             $format = new \FFMpeg\Format\Video\X264('libmp3lame');
+            $videoFile = $video->addFilter($filter)
+                 ->export()
+                 ->toDisk('videos')
+                 ->inFormat($format);
+
+
 
              DB::beginTransaction();
 
@@ -62,6 +75,7 @@ namespace App\Services;
                  'info' => $request->info,
                  'duration' => $video->getDurationInSeconds(),
                  'banner' => null,
+                 'enable_comments' => $request->enable_comments,
                  'publish_at' => $request->publish_at,
 
              ]);
@@ -71,7 +85,8 @@ namespace App\Services;
              $video->save();
 
 
-             Storage::disk('videos')->move('/tmp/' . $request->video_id, auth()->id() . '/' . $video->slug);
+             $videoFile->save(auth()->id() . '/' .$video->slug . '.mp4');
+             Storage::disk('videos')->delete($upladedVideoPath);
 
              if ($request->banner){
                  Storage::disk('videos')->move('/tmp/' . $request->banner, auth()->id() . '/' . $video->banner);

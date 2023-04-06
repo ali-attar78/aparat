@@ -11,6 +11,7 @@ namespace App\Services;
  use Illuminate\Auth\Access\AuthorizationException;
  use Illuminate\Support\Facades\DB;
  use Illuminate\Support\Facades\Log;
+ use Illuminate\Support\Facades\Storage;
  use Lcobucci\JWT\Exception;
  use Illuminate\Support\Str;
 
@@ -68,17 +69,17 @@ namespace App\Services;
          try {
              $banner=$request->file('banner');
              $fileName= md5(auth()->id()) . '-' . Str::random(15);
-             $banner->move(public_path('channel-banners'),$fileName);
+             Storage::disk('channel')->put($fileName,$banner->get());
 
              $channel=auth()->user()->channel;
              if ($channel->banner){
-                 unlink(public_path($channel->banner));
+                 Storage::disk('channel')->delete($channel->banner);
              }
-             $channel->banner='channel-banners/' . $fileName;
+             $channel->banner=Storage::disk('channel')->path($fileName);
              $channel->save();
 
              return response([
-                 'banner' => url('channel-banners/' . $fileName)
+                 'banner' => Storage::disk('channel')->url($fileName)
              ],200);
          }
 

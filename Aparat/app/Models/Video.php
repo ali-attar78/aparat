@@ -8,6 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Video extends Model
 {
     use HasFactory;
+
+    const STATE_PENDING='pending';
+    const STATE_CONVERTED='converted';
+    const STATE_ACCEPTED='accepted';
+    const STATE_BLOCKED='blocked';
+    const STATES = [self::STATE_PENDING,self::STATE_CONVERTED,self::STATE_ACCEPTED,self::STATE_BLOCKED];
     protected $table='videos';
     protected $fillable=[
         'user_id' ,
@@ -19,6 +25,7 @@ class Video extends Model
         'duration' ,
         'banner' ,
         'publish_at',
+        'enable_comments',
     ];
 
     public function playlist()

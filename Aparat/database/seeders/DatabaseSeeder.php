@@ -26,11 +26,9 @@ class DatabaseSeeder extends Seeder
 
 
         Schema::enableForeignKeyConstraints();
-        // \App\Models\User::factory(10)->create();
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        Artisan::call('aparat:clear');
+        $this->command->info('clear all aparat temporary files');
+
     }
 }
