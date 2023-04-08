@@ -4,14 +4,19 @@ namespace App\Services;
 
 
 
+ use App\Events\UploadNewVideo;
+ use App\Http\Requests\Video\ChangeStateVideoRequest;
  use App\Http\Requests\Video\CreateVideoRequest;
+ use App\Http\Requests\Video\ListVideoRequest;
  use App\Http\Requests\Video\UploadBannerRequest;
  use App\Http\Requests\Video\UploadVideoRequest;
+ use App\Jobs\ConvertAndAddWaterMarkToUploadedVideoJob;
  use App\Models\Playlist;
  use App\Models\Video;
  use FFMpeg\FFMpeg;
  use FFMpeg\Filters\Video\CustomFilter;
  use FFMpeg\Filters\Video\VideoFilters;
+ use Illuminate\Database\Eloquent\ModelNotFoundException;
  use Illuminate\Support\Facades\DB;
  use Illuminate\Support\Facades\Log;
  use Illuminate\Support\Facades\Storage;
@@ -49,20 +54,6 @@ namespace App\Services;
          try {
 
 
-             /** @var Media $video */
-             $upladedVideoPath='/tmp/' . $request->video_id;
-             $video = \FFM::fromDisk('videos')->open($upladedVideoPath);
-
-             $filter=new CustomFilter("drawtext=text='http\\://aliattar.com'
-             :fontcolor=white:fontsize=30:box=1:boxcolor=white@0.5");
-             $format = new \FFMpeg\Format\Video\X264('libmp3lame');
-            $videoFile = $video->addFilter($filter)
-                 ->export()
-                 ->toDisk('videos')
-                 ->inFormat($format);
-
-
-
              DB::beginTransaction();
 
              $video= Video::create([
@@ -73,10 +64,11 @@ namespace App\Services;
                  'slug' => '',
                  'title' => $request->title,
                  'info' => $request->info,
-                 'duration' => $video->getDurationInSeconds(),
+                 'duration' => 0,
                  'banner' => null,
                  'enable_comments' => $request->enable_comments,
                  'publish_at' => $request->publish_at,
+                 'state' => Video::STATE_PENDING,
 
              ]);
 
@@ -85,9 +77,7 @@ namespace App\Services;
              $video->save();
 
 
-             $videoFile->save(auth()->id() . '/' .$video->slug . '.mp4');
-             Storage::disk('videos')->delete($upladedVideoPath);
-
+             event(new UploadNewVideo($video,$request));
              if ($request->banner){
                  Storage::disk('videos')->move('/tmp/' . $request->banner, auth()->id() . '/' . $video->banner);
              }
@@ -136,5 +126,21 @@ namespace App\Services;
              ],500);
          }
 
+     }
+
+     public static function changeState(ChangeStateVideoRequest $request)
+     {
+         $video=$request->video;
+         $video->state=$request->state;
+         $video->save();
+
+         return response($video);
+     }
+
+     public static function list(ListVideoRequest $request)
+     {
+         $user=auth()->user();
+         $videos=$user->videos()->paginate(2);
+         return $videos;
      }
  }

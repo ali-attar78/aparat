@@ -78,6 +78,19 @@ class User extends Authenticatable
         return $this->hasMany(Playlist::class);
     }
 
+    public function videos(){
+        return $this->hasMany(Video::class);
+    }
+
+    public function isAdmin()
+    {
+        return $this->type === User::TYPE_ADMIN;
+    }
+
+    public function isBaseUser()
+    {
+        return $this->type === User::TYPE_USER;
+    }
 
 
 

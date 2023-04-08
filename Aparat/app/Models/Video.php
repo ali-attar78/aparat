@@ -26,6 +26,7 @@ class Video extends Model
         'banner' ,
         'publish_at',
         'enable_comments',
+        'state',
     ];
 
     public function playlist()
@@ -37,5 +38,17 @@ class Video extends Model
     {
         return $this->belongsToMany(Tag::class,'video_tags');
     }
+
+    public function user()
+    {
+        return$this->belongsTo(User::class);
+    }
+
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
 
 }

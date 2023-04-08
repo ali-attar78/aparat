@@ -3,7 +3,10 @@
 namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
+use App\Models\Video;
+use App\Policies\VideoPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 use Laravel\Passport\Passport;
 
 class AuthServiceProvider extends ServiceProvider
@@ -15,6 +18,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         // 'App\Models\Model' => 'App\Policies\ModelPolicy',
+        Video::class => VideoPolicy::class
     ];
 
     /**
@@ -23,7 +27,23 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
 
+        $this->registerPolicies();
+
         Passport::tokensExpireIn(now()->addMinute(config('auth.token_expiration.token')));
         Passport::refreshTokensExpireIn(now()->addMinute(config('auth.token_expiration.refresh_token')));
+
+        $this->registerGates();
     }
+
+    private function registerGates()
+    {
+        Gate::before(function ($user , $ability){
+            if ($user->isAdmin())
+            {
+                return true;
+            }
+
+        });
+    }
+
 }
