@@ -78,6 +78,10 @@ Route::group(['prefix'=>'/video'],function ($router){
 
     $router->get('/', [VideoController::class, 'list'])->middleware('auth:api')->name('video.list');
 
+    $router->post('/{video}/republish', [VideoController::class, 'republish'])->middleware('auth:api')->name('video.republish');
+
+    $router->post('/{video}/like', [VideoController::class, 'like'])->middleware('auth:api')->name('video.like');
+
 
 
 });

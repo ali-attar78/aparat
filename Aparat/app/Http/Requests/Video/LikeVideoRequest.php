@@ -4,7 +4,7 @@ namespace App\Http\Requests\Video;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ListVideoRequest extends FormRequest
+class LikeVideoRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,7 @@ class ListVideoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'republished' => 'nullable|boolean'
+            'like' => 'required|boolean'
         ];
     }
 }

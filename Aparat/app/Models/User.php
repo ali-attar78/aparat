@@ -78,8 +78,29 @@ class User extends Authenticatable
         return $this->hasMany(Playlist::class);
     }
 
-    public function videos(){
-        return $this->hasMany(Video::class);
+    public function favouriteVideos()
+    {
+        return $this->hasManyThrough(
+            Video::class,
+            VideoFavourite::class,
+            'user_id', //republish video user id
+            'id', // video id
+            'id', //user id
+            'video_id' //republished videl
+        );
+    }
+
+    public function channelVideos()
+    {
+        return $this->hasMany(Video::class)
+            ->selectRaw('videos.*, 0 as republished');
+    }
+
+    public function videos()
+    {
+        return $this->channelVideos()
+            ->union(
+                $this->republishedVideos());
     }
 
     public function isAdmin()
@@ -92,6 +113,20 @@ class User extends Authenticatable
         return $this->type === User::TYPE_USER;
     }
 
+
+    public function republishedVideos()
+    {
+        return $this->hasManyThrough(
+            Video::class,
+            VideoRepublish::class,
+            'user_id', //republish video user id
+            'id', // video id
+            'id', //user id
+            'video_id' //republished videl
+        )
+            ->selectRaw('videos.*, 1 as republished');
+
+    }
 
 
 

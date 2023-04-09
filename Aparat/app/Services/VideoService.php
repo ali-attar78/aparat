@@ -7,15 +7,20 @@ namespace App\Services;
  use App\Events\UploadNewVideo;
  use App\Http\Requests\Video\ChangeStateVideoRequest;
  use App\Http\Requests\Video\CreateVideoRequest;
+ use App\Http\Requests\Video\LikeVideoRequest;
  use App\Http\Requests\Video\ListVideoRequest;
+ use App\Http\Requests\Video\RepublishVideoRequest;
  use App\Http\Requests\Video\UploadBannerRequest;
  use App\Http\Requests\Video\UploadVideoRequest;
  use App\Jobs\ConvertAndAddWaterMarkToUploadedVideoJob;
  use App\Models\Playlist;
  use App\Models\Video;
+ use App\Models\VideoFavourite;
+ use App\Models\VideoRepublish;
  use FFMpeg\FFMpeg;
  use FFMpeg\Filters\Video\CustomFilter;
  use FFMpeg\Filters\Video\VideoFilters;
+ use http\Env\Response;
  use Illuminate\Database\Eloquent\ModelNotFoundException;
  use Illuminate\Support\Facades\DB;
  use Illuminate\Support\Facades\Log;
@@ -140,7 +145,79 @@ namespace App\Services;
      public static function list(ListVideoRequest $request)
      {
          $user=auth()->user();
-         $videos=$user->videos()->paginate(2);
-         return $videos;
+
+         if ($request->has('republished'))
+         {
+         $videos = $request->republished ? $user->republishedVideos() : $user->channelVideos();
+         }
+         else{
+             $videos=$user->videos();
+         }
+
+         $result = $videos->orderBy('id')->paginate(10);
+         return $result;
      }
+
+     public static function republish(RepublishVideoRequest $request)
+     {
+         try {
+
+
+             VideoRepublish::create([
+                 'user_id' =>  auth()->id,
+                 'video_id' => $request->video->id,
+             ]);
+             return response(['message' => 'republish successfully'], 200);
+
+         }
+         catch (Exception $exception)
+         {
+             Log::error($exception);
+             return response(['message' => 'republish failed'], 500);
+
+         }
+
+     }
+
+     public static function like(LikeVideoRequest $request)
+     {
+         $user=auth()->user();
+         $video = $request->video;
+         $like=$request->like;
+         $favourites=$user->favouriteVideos()->where(['video_id'=>$video->id])->first();
+
+
+         if (empty($favourites)){
+             if ($like)
+             {
+                 VideoFavourite::create([
+                    'user_id'=>$user->id,
+                    'video_id' => $video->id,
+                 ]);
+             }
+             else{
+                 return response(['message'=>'شما قادر به این کار نیستید'],400);
+             }
+         }
+         else{
+
+             if (!$like)
+             {
+                 VideoFavourite::where([
+                     'user_id'=>$user->id,
+                     'video_id' => $video->id,
+                 ])->delete();
+             }
+             else{
+                 return response(['message'=>'شما قبلا این ویدیو زا پسند کرده اید'],400);
+             }
+
+         }
+
+         return response(['message'=>'با موفقیت ثبت شد'],200);
+
+
+     }
+
+
  }

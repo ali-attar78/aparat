@@ -3,15 +3,16 @@
 namespace App\Http\Requests\Video;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
-class ListVideoRequest extends FormRequest
+class RepublishVideoRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return Gate::allows('republish',$this->video);
     }
 
     /**
@@ -22,7 +23,7 @@ class ListVideoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'republished' => 'nullable|boolean'
+            //
         ];
     }
 }
