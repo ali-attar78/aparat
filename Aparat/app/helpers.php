@@ -58,3 +58,10 @@ if (!function_exists('clear_storage')) {
 
     }
 }
+
+if (!function_exists('client_ip')) {
+    function client_ip()
+    {
+        return $_SERVER['REMOTE_ADDR'] . '-' . md5($_SERVER['HTTP_USER_AGENT']);
+    }
+}

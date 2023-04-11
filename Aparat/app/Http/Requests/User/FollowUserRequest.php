@@ -1,19 +1,18 @@
 <?php
 
-namespace App\Http\Requests\Video;
+namespace App\Http\Requests\User;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 
-class LikeVideoRequest extends FormRequest
+class FollowUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return Gate::forUser(auth('api')->user())->allows('like',$this->video);
-
+        return Gate::allows('follow',$this->channel->user);
     }
 
     /**

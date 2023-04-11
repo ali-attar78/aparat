@@ -9,13 +9,16 @@ namespace App\Services;
  use App\Http\Requests\User\ChangeEmailRequest;
  use App\Http\Requests\User\ChangeEmailSubmitRequest;
  use App\Http\Requests\User\ChangePasswordRequest;
+ use App\Http\Requests\User\FollowingUserRequest;
+ use App\Http\Requests\User\FollowUserRequest;
+ use App\Http\Requests\User\UnFollowUserRequest;
  use App\Models\User;
  use Illuminate\Database\Eloquent\ModelNotFoundException;
  use Illuminate\Support\Facades\Cache;
  use Illuminate\Support\Facades\DB;
+ use Illuminate\Support\Facades\Hash;
  use Illuminate\Support\Facades\Log;
  use mysql_xdevapi\Exception;
- use Illuminate\Support\Facades\Hash;
 
  class UserService extends BaseService
 {
@@ -186,6 +189,40 @@ namespace App\Services;
              return response(['message' => 'خطایی رخ داده است'], 500);
 
          }
+
+     }
+
+     public static function follow(FollowUserRequest $request)
+     {
+         $user = $request->user();
+         $user->follow($request->channel->user);
+         return response(["message" => "کانال با موفقست به لیست دنبال شوندگان اضافه شد"], 200);
+
+     }
+
+     public static function unfollow(UnFollowUserRequest $request)
+     {
+
+         $user = $request->user();
+         $user->unfollow($request->channel->user);
+         return response(["message" => "کانال با موفقست از لیست دنبال شوندگان حذف شد"], 200);
+
+
+     }
+
+     public static function followings(FollowingUserRequest $request)
+     {
+         return $request->user()
+             ->followings()
+             ->paginate();
+     }
+
+     public static function followers(FollowingUserRequest $request)
+     {
+
+         return $request->user()
+             ->followers()
+             ->paginate();
 
      }
 

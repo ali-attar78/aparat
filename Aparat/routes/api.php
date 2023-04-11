@@ -53,6 +53,17 @@ Route::group([],function ($router){
     $router->match(['post', 'put'], 'change-password', [UserController::class, 'changePassword'])->middleware('auth:api')->name('password.change');
 
 
+    Route::group(['prefix'=>'/user'],function ($router) {
+
+        $router->match(['post', 'get'], '/{channel}/follow', [UserController::class, 'follow'])->middleware('auth:api')->name('user.follow');
+
+        $router->match(['post', 'get'], '/{channel}/unfollow', [UserController::class, 'unfollow'])->middleware('auth:api')->name('user.unfollow');
+
+        $router->get( '/followings', [UserController::class, 'followings'])->middleware('auth:api')->name('user.followings');
+
+        $router->get( '/followers', [UserController::class, 'followers'])->middleware('auth:api')->name('user.followers');
+    });
+
 });
 
 Route::group(['prefix'=>'/channel'],function ($router){
@@ -68,6 +79,19 @@ Route::group(['prefix'=>'/channel'],function ($router){
 
 Route::group(['prefix'=>'/video'],function ($router){
 
+
+    $router->match(['get','post'], '/{video}/like', [VideoController::class, 'like'])->name('video.like');
+
+    $router->match(['get','post'], '/{video}/unlike', [VideoController::class, 'unlike'])->name('video.unlike');
+
+
+    $router->get('/', [VideoController::class, 'list'])->name('video.list');
+
+    $router->get('/{video}', [VideoController::class, 'show'])->name('video.show');
+
+
+
+
     $router->post('/upload', [VideoController::class, 'upload'])->middleware('auth:api')->name('video.upload');
 
     $router->post('/upload-banner', [VideoController::class, 'uploadBanner'])->middleware('auth:api')->name('video.upload.banner');
@@ -76,11 +100,10 @@ Route::group(['prefix'=>'/video'],function ($router){
 
     $router->put('/{video}/state', [VideoController::class, 'changeState'])->middleware('auth:api')->name('video.change.state');
 
-    $router->get('/', [VideoController::class, 'list'])->middleware('auth:api')->name('video.list');
-
     $router->post('/{video}/republish', [VideoController::class, 'republish'])->middleware('auth:api')->name('video.republish');
 
-    $router->post('/{video}/like', [VideoController::class, 'like'])->middleware('auth:api')->name('video.like');
+    $router->get('/liked', [VideoController::class, 'likedByCurrentUser'])->middleware('auth:api')->name('video.liked');
+
 
 
 

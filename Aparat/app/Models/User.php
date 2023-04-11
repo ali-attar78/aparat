@@ -78,6 +78,11 @@ class User extends Authenticatable
         return $this->hasMany(Playlist::class);
     }
 
+    public function views()
+    {
+        return $this->belongsToMany(Video::class,'video_views')->withTimestamps();
+    }
+
     public function favouriteVideos()
     {
         return $this->hasManyThrough(
@@ -111,6 +116,51 @@ class User extends Authenticatable
     public function isBaseUser()
     {
         return $this->type === User::TYPE_USER;
+    }
+
+
+    public function follow(User $user)
+    {
+
+        return UserFollowing::create([
+            'user_id1' => $this->id,
+            'user_id2' => $user->id,
+        ]);
+    }
+
+    public function unfollow(User $user)
+    {
+
+        return UserFollowing::where([
+            'user_id1' => $this->id,
+            'user_id2' => $user->id,
+        ])->delete();
+    }
+
+
+    public function followings()
+    {
+        return $this->hasManyThrough(
+            User::class,
+            UserFollowing::class,
+            'user_id1',
+            'id',
+            'id',
+            'user_id2',
+        );
+    }
+
+
+    public function followers( )
+    {
+        return $this->hasManyThrough(
+            User::class,
+            UserFollowing::class,
+            'user_id2',
+            'id',
+            'id',
+            'user_id1',
+        );
     }
 
 

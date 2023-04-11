@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Channel;
 use App\Models\Video;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
@@ -35,7 +36,8 @@ class RouteServiceProvider extends ServiceProvider
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
 
-            Route::model('video',Video::class);
+            $this->registerModelBindigs();
+
         });
     }
 
@@ -47,5 +49,13 @@ class RouteServiceProvider extends ServiceProvider
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
+    }
+
+    private function registerModelBindigs()
+    {
+
+        Route::model('video',Video::class);
+        Route::model('channel',Channel::class);
+
     }
 }

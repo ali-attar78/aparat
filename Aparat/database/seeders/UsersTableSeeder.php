@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Channel;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -14,10 +15,15 @@ class UsersTableSeeder extends Seeder
     public function run(): void
     {
         if(User::count()){
-            return;
+            Channel::truncate();
+            User::truncate();
         }
         $this->createAdminUser();
-        $this->createUser();
+        for ($i=1;$i<5;$i++)
+        {
+            $this->createUser($i);
+        }
+
     }
 
     private function createAdminUser()
@@ -26,23 +32,23 @@ class UsersTableSeeder extends Seeder
             'type' => User::TYPE_ADMIN,
             'name' => 'مدیر اصلی',
             'email' => 'admin@aparat.me',
-            'mobile' => '+989111111111',
+            'mobile' => '+989000000000',
             ]);
 
        $this->command->info('کاربر ادمین اصلی سایت ایجاد شد');
     }
 
-    private function createUser()
+    private function createUser($num = 1)
     {
 
 
         $user = User::factory(1)->create([
-            'name' => 'کاربر1',
-            'email' => 'user1@aparat.me',
-            'mobile' => '+989222222222',
+            'name' => 'کاربر' . $num,
+            'email' => 'user'. $num .'@aparat.me',
+            'mobile' => '+989' . str_repeat($num,9),
         ]);
 
-        $this->command->info('یک کاربر پیش فرض به سیستم اضافه شد');
+        $this->command->info('کاربر' . $num . 'به سیستم اضافه شد');
 
 
     }

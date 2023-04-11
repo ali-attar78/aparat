@@ -39,9 +39,35 @@ class Video extends Model
         return $this->belongsToMany(Tag::class,'video_tags');
     }
 
+     public function viewer()
+        {
+            return $this->belongsToMany(User::class,'video_views')->withTimestamps();
+        }
+
+
     public function user()
     {
         return$this->belongsTo(User::class);
+    }
+
+    public function toArray()
+    {
+        $data=parent::toArray();
+
+        $conditions=[
+            'video_id'=> $this->id,
+            'user_id'=>auth('api')->check() ? auth('api')->id() : null,
+
+        ];
+
+        if (!auth('api')->check()){
+            $conditions['user_ip'] = client_ip();
+        }
+
+        $data['liked'] = VideoFavourite::where($conditions)->count();
+
+        return $data;
+
     }
 
 
@@ -50,5 +76,39 @@ class Video extends Model
         return 'slug';
     }
 
+    public function isInState($state)
+    {
+        return $this->state === $state;
+    }
+
+    public function isPending()
+    {
+        return $this->isInState(self::STATE_PENDING) ;
+    }
+
+    public function isAccepted()
+    {
+        return $this->isInState(self::STATE_ACCEPTED) ;
+    }
+
+    public function isBlocked()
+    {
+        return $this->isInState(self::STATE_BLOCKED) ;
+    }
+
+    public function isConverted()
+    {
+        return $this->isInState(self::STATE_CONVERTED) ;
+    }
+
+    public static function whereNotRepublished()
+    {
+        return static::whereRaw('id not in (select video_id from video_republishes)');
+    }
+
+    public static function whereRepublished()
+    {
+        return static::whereRaw('id in (select video_id from video_republishes)');
+    }
 
 }

@@ -6,14 +6,11 @@ namespace App\Services;
  use App\Http\Requests\Channel\UpdateSocialsRequest;
  use App\Http\Requests\Channel\UploadBannerForChannelRequest;
  use App\Models\Channel;
- use App\Models\User;
- use http\Env\Response;
- use Illuminate\Auth\Access\AuthorizationException;
  use Illuminate\Support\Facades\DB;
  use Illuminate\Support\Facades\Log;
  use Illuminate\Support\Facades\Storage;
- use Lcobucci\JWT\Exception;
  use Illuminate\Support\Str;
+ use Lcobucci\JWT\Exception;
 
  class ChannelService extends BaseService
 {
@@ -117,6 +114,8 @@ namespace App\Services;
 
          }
      }
+
+
 
 
  }

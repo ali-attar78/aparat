@@ -5,11 +5,15 @@ namespace App\Services;
 
 
  use App\Events\UploadNewVideo;
+ use App\Events\VisitVideo;
  use App\Http\Requests\Video\ChangeStateVideoRequest;
  use App\Http\Requests\Video\CreateVideoRequest;
+ use App\Http\Requests\Video\LikedByCurrentUserVideoRequest;
  use App\Http\Requests\Video\LikeVideoRequest;
  use App\Http\Requests\Video\ListVideoRequest;
  use App\Http\Requests\Video\RepublishVideoRequest;
+ use App\Http\Requests\Video\ShowVideoRequest;
+ use App\Http\Requests\Video\UnLikeVideoRequest;
  use App\Http\Requests\Video\UploadBannerRequest;
  use App\Http\Requests\Video\UploadVideoRequest;
  use App\Jobs\ConvertAndAddWaterMarkToUploadedVideoJob;
@@ -20,6 +24,7 @@ namespace App\Services;
  use FFMpeg\FFMpeg;
  use FFMpeg\Filters\Video\CustomFilter;
  use FFMpeg\Filters\Video\VideoFilters;
+ use http\Client\Curl\User;
  use http\Env\Response;
  use Illuminate\Database\Eloquent\ModelNotFoundException;
  use Illuminate\Support\Facades\DB;
@@ -144,17 +149,24 @@ namespace App\Services;
 
      public static function list(ListVideoRequest $request)
      {
-         $user=auth()->user();
+         $user=auth('api')->user();
 
          if ($request->has('republished'))
          {
-         $videos = $request->republished ? $user->republishedVideos() : $user->channelVideos();
-         }
-         else{
-             $videos=$user->videos();
+             if ($user){
+                 $videos = $request->republished ? $user->republishedVideos() : $user->channelVideos();
+             }
+             else{
+                 $videos=$request->republished ? Video::whereRepublished() : Video::whereNotRepublished();
+             }
          }
 
-         $result = $videos->orderBy('id')->paginate(10);
+         else{
+                 $videos= $user ? $user->videos() : Video::query();
+         }
+
+
+         $result = $videos->orderBy('id')->paginate();
          return $result;
      }
 
@@ -181,42 +193,51 @@ namespace App\Services;
 
      public static function like(LikeVideoRequest $request)
      {
-         $user=auth()->user();
-         $video = $request->video;
-         $like=$request->like;
-         $favourites=$user->favouriteVideos()->where(['video_id'=>$video->id])->first();
 
-
-         if (empty($favourites)){
-             if ($like)
-             {
-                 VideoFavourite::create([
-                    'user_id'=>$user->id,
-                    'video_id' => $video->id,
-                 ]);
-             }
-             else{
-                 return response(['message'=>'شما قادر به این کار نیستید'],400);
-             }
-         }
-         else{
-
-             if (!$like)
-             {
-                 VideoFavourite::where([
-                     'user_id'=>$user->id,
-                     'video_id' => $video->id,
-                 ])->delete();
-             }
-             else{
-                 return response(['message'=>'شما قبلا این ویدیو زا پسند کرده اید'],400);
-             }
-
-         }
+         VideoFavourite::create([
+             'user_id'=>auth('api')->id() ,
+             'user_ip'=>client_ip(),
+             'video_id' => $request->video->id,
+         ]);
 
          return response(['message'=>'با موفقیت ثبت شد'],200);
 
 
+         }
+
+     public static function likedByCurrentUser(LikedByCurrentUserVideoRequest $request)
+     {
+         $user = $request->user();
+         $videos = $user->favouriteVideos()->paginate();
+
+         return $videos;
+     }
+
+     public static function unlike(UnLikeVideoRequest $request)
+     {
+         $user=auth('api')->user();
+
+         $conditions =[
+             'video_id' => $request->video->id,
+             'user_id' => $user ? $user->id : null,
+         ];
+
+         if (empty($user))
+         {
+             $conditions['user_ip'] = client_ip();
+         }
+
+        VideoFavourite::where($conditions)->delete();
+
+         return response(['message'=>'با موفقیت ثبت شد'],200);
+
+
+     }
+
+     public static function show(ShowVideoRequest $request)
+     {
+            event(new VisitVideo($request->video));
+            return $request->video;
      }
 
 

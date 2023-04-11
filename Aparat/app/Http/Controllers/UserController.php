@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\User\ChangeEmailRequest;
 use App\Http\Requests\User\ChangeEmailSubmitRequest;
 use App\Http\Requests\User\ChangePasswordRequest;
+use App\Http\Requests\User\FollowingUserRequest;
+use App\Http\Requests\User\FollowUserRequest;
+use App\Http\Requests\User\UnFollowUserRequest;
+use App\Services\ChannelService;
 use App\Services\UserService;
 use http\Env\Response;
 use Illuminate\Http\Request;
@@ -30,5 +34,26 @@ class UserController extends Controller
     {
         return UserService::changePassword($request);
     }
+
+    public function follow(FollowUserRequest $request)
+    {
+        return UserService::follow($request);
+    }
+
+    public function unfollow(UnFollowUserRequest $request)
+    {
+        return UserService::unfollow($request);
+    }
+
+  public function followings(FollowingUserRequest $request)
+    {
+        return UserService::followings($request);
+    }
+
+ public function followers(FollowingUserRequest $request)
+    {
+        return UserService::followers($request);
+    }
+
 
 }

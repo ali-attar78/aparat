@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Channel;
 
 use App\Models\User;
+use App\Rules\ChannelName;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -29,7 +30,7 @@ class UpdateChannelRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string:255',
+            'name' => ['required', new ChannelName],
             'website' => 'nullable|url|max:255',
             'info' => 'nullable|string'
         ];

@@ -2,17 +2,18 @@
 
 namespace App\Http\Requests\Video;
 
+use App\Models\Video;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 
-class LikeVideoRequest extends FormRequest
+class ShowVideoRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return Gate::forUser(auth('api')->user())->allows('like',$this->video);
+        return true;
 
     }
 
