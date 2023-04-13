@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ChannelController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PlaylistController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\VideoController;
@@ -74,6 +75,8 @@ Route::group(['prefix'=>'/channel'],function ($router){
 
     $router->match(['post', 'put'], '/socials', [ChannelController::class, 'updateSocials'])->middleware('auth:api')->name('channel.update.socials');
 
+    $router->get( '/statistics', [ChannelController::class, 'statistics'])->middleware('auth:api')->name('channel.statistics');
+
 
 });
 
@@ -138,6 +141,19 @@ Route::group(['prefix'=>'/tag'],function ($router){
     $router->get('/', [TagController::class, 'index'])->middleware('auth:api')->name('tags.all');
 
     $router->post('/create', [TagController::class, 'create'])->middleware('auth:api')->name('tags.create');
+
+});
+
+Route::group(['prefix'=>'/comment'],function ($router){
+
+    $router->get('/', [CommentController::class, 'index'])->middleware('auth:api')->name('comment.all');
+
+    $router->post('/create', [CommentController::class, 'create'])->middleware('auth:api')->name('comment.create');
+
+    $router->match(['post','put'],'/{comment}/state', [CommentController::class, 'changeState'])->middleware('auth:api')->name('comment.change.state');
+
+    $router->delete('/{comment}', [CommentController::class, 'delete'])->middleware('auth:api')->name('comment.delete');
+
 
 });
 

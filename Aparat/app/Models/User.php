@@ -4,13 +4,14 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable ,SoftDeletes;
 
     const TYPE_ADMIN ='admin';
     const TYPE_USER ='user ';
@@ -82,6 +83,13 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Video::class,'video_views')->withTimestamps();
     }
+
+     public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+
 
     public function favouriteVideos()
     {

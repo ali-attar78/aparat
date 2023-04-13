@@ -28,6 +28,7 @@ return new class extends Migration
             $table->enum('state',Video::STATES)->default(Video::STATE_PENDING);
 
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('user_id')
                 ->references('id')

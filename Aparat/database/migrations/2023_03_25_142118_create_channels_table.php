@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('banner')->nullable();
             $table->string('socials')->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('user_id')
                 ->references('id')

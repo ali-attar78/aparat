@@ -60,8 +60,15 @@ if (!function_exists('clear_storage')) {
 }
 
 if (!function_exists('client_ip')) {
-    function client_ip()
+    function client_ip($withDate = false)
     {
-        return $_SERVER['REMOTE_ADDR'] . '-' . md5($_SERVER['HTTP_USER_AGENT']);
+        $ip = $_SERVER['REMOTE_ADDR'] . '-' . md5($_SERVER['HTTP_USER_AGENT']);
+
+        if ($withDate){
+            $ip .='-' . now()->toDateString();
+        }
+
+        return $ip;
+
     }
 }

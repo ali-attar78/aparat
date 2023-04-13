@@ -3,6 +3,7 @@
 namespace App\listeners;
 
 use App\Events\VisitVideo;
+use App\Models\VideoView;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Log;
@@ -25,7 +26,28 @@ class AddVisitedVideoLogToVideoViewsTable
     {
         try {
             $video = $event->getVideo();
-            $video->viewer()->attach(auth('api')->id());
+
+            $conditions = [
+              'user_id'=>auth('api')->id(),
+              'video_id'=> $video->id,
+                ['created_at','>',now()->subDays(1)]
+            ];
+
+            $clientIp=client_ip();
+
+            if (!auth('api')->check())
+            {
+                $conditions['user_ip']=$clientIp;
+            }
+
+            if (!VideoView::where($conditions)->count()){
+                VideoView::create([
+                    'user_id'=>auth('api')->id(),
+                    'video_id'=> $video->id,
+                    'user_ip'=>$clientIp,
+                ]);
+            }
+
         }
         catch (Exception $exception){
             Log::error($exception);

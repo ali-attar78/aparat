@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Comment;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,8 +19,9 @@ return new class extends Migration
             $table->unsignedBigInteger('video_id');
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->text('body');
-            $table->timestamp('accepted_at')->nullable();
+            $table->enum('state',Comment::STATES)->default(Comment::STATE_PENDING);
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('user_id')
                 ->references('id')
