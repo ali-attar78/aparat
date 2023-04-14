@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\Storage;
 
 class Video extends Model
 {
@@ -59,6 +60,19 @@ class Video extends Model
     }
 
 
+    public function getVideoLinkAttribute()
+    {
+        return Storage::disk('videos')
+            ->url($this->user_id . '/' . $this->slug . '.mp4');
+    }
+
+    public function getBannerLinkAttribute()
+    {
+        return Storage::disk('videos')
+            ->url($this->user_id . '/' . $this->slug . '-banner');
+    }
+
+
     public function toArray()
     {
         $data=parent::toArray();
@@ -72,8 +86,11 @@ class Video extends Model
         if (!auth('api')->check()){
             $conditions['user_ip'] = client_ip();
         }
-
+        $data['link'] = $this->video_link;
+        $data['banner_link'] = $this->banner_link;
         $data['liked'] = VideoFavourite::where($conditions)->count();
+        $data['views'] = VideoView::where(['video_id'=> $this->id])->count();
+        $data['tags'] = $this->tags;
 
         return $data;
 

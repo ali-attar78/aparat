@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Category\CreateCategoryRequest;
 use App\Http\Requests\Category\ListCategoryRequest;
 use App\Http\Requests\Category\UploadCategoryBannerRequest;
+use App\Http\Requests\Playlist\AddVideoToPlaylistRequest;
 use App\Http\Requests\Playlist\ListPlaylistRequest;
 use App\Http\Requests\Playlist\MyPlaylistRequest;
 use App\Http\Requests\Playlist\PlaylistCreateRequest;
@@ -28,6 +29,11 @@ class PlaylistController extends Controller
     public function create(PlaylistCreateRequest $request)
     {
         return PlaylistService::create($request);
+    }
+
+   public function addVideo(AddVideoToPlaylistRequest $request)
+    {
+        return PlaylistService::addVideo($request);
     }
 
 

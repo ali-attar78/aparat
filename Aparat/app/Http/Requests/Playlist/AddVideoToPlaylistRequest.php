@@ -1,17 +1,19 @@
 <?php
 
-namespace App\Http\Requests\Channel;
+namespace App\Http\Requests\Playlist;
 
+use App\Rules\UniqueForUser;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
-class StatisticsRequest extends FormRequest
+class AddVideoToPlaylistRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return Gate::allows('addVideo',[$this->playlist,$this->video]);
     }
 
     /**
@@ -22,8 +24,6 @@ class StatisticsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'last_n_date'=> 'nullable|in:7,14,30,90'
-
         ];
     }
 }

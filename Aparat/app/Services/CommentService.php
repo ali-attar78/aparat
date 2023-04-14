@@ -16,6 +16,9 @@ namespace App\Services;
  use App\Models\Comment;
  use App\Models\Playlist;
  use App\Models\Video;
+ use Illuminate\Support\Facades\DB;
+ use Illuminate\Support\Facades\Log;
+ use Lcobucci\JWT\Exception;
 
  class CommentService extends BaseService
 {
@@ -63,9 +66,17 @@ namespace App\Services;
 
      public static function delete(DeleteCommentRequest $request)
      {
-
-         $request->comment->delete();
-         return response(['message'=>'با موفقیت حذف شد'],200);
+         try {
+            DB::beginTransaction();
+            $request->comment->delete();
+            DB::commit();
+             return response(['message'=>'با موفقیت حذف شد'],200);
+         }
+         catch (Exception $exception){
+             DB::rollBack();
+             Log::error($exception);
+             return response(['message'=>'حذف با شکست مواجه شد'],500);
+         }
 
      }
 

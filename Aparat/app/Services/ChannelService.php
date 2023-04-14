@@ -120,6 +120,8 @@ namespace App\Services;
      public static function statistics(StatisticsRequest $request)
      {
 
+         $fromDate = now()->subDays($request->get('last_n_date',7))->toDateString();
+
 
          $data = [
              'views' => [],
@@ -133,10 +135,11 @@ namespace App\Services;
 
 
              Video::views($request->user()->id)
-             ->selectRaw('date(video_views.created_at) as date, count(*) as views')
-             ->groupBy(DB::raw('date(video_views.created_at)'))
-             ->get()
-             ->each(function ($item) use (&$data){
+                 ->whereRaw("date(video_views.created_at) >= '{$fromDate}'")
+                 ->selectRaw('date(video_views.created_at) as date, count(*) as views')
+                 ->groupBy(DB::raw('date(video_views.created_at)'))
+                 ->get()
+                 ->each(function ($item) use (&$data){
 
              $data['total_views'] += $item->views;
              $data['views'][$item->date] = $item->views;

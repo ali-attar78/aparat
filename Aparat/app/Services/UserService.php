@@ -12,6 +12,7 @@ namespace App\Services;
  use App\Http\Requests\User\FollowingUserRequest;
  use App\Http\Requests\User\FollowUserRequest;
  use App\Http\Requests\User\UnFollowUserRequest;
+ use App\Http\Requests\User\UnregisterUserRequest;
  use App\Models\User;
  use Illuminate\Database\Eloquent\ModelNotFoundException;
  use Illuminate\Support\Facades\Cache;
@@ -223,6 +224,23 @@ namespace App\Services;
          return $request->user()
              ->followers()
              ->paginate();
+
+     }
+
+     public static function unregister(UnregisterUserRequest $request)
+     {
+
+         try {
+             DB::beginTransaction();
+             $request->user()->delete();
+             DB::commit();
+             return response(['message'=>'با موفقیت حذف شد'],200);
+         }
+         catch (\Lcobucci\JWT\Exception $exception){
+             DB::rollBack();
+             Log::error($exception);
+             return response(['message'=>'حذف با شکست مواجه شد'],500);
+         }
 
      }
 

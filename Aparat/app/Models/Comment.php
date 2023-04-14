@@ -39,12 +39,26 @@ class Comment extends Model
         return $this->belongsTo(Comment::class,'parent_id');
     }
 
+    public function children()
+    {
+        return $this->hasMany(Comment::class,'parent_id');
+    }
+
+
     public static function channelComments($userId)
     {
          return Comment::join('videos','comments.video_id','=','videos.id')
              ->selectRaw('comments.*')
              ->where('videos.user_id',$userId);
+    }
 
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($comment){
+            $comment->children()->delete();
+        });
     }
 
 

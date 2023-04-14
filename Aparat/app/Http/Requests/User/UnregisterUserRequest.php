@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Http\Requests\Channel;
+namespace App\Http\Requests\User;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
-class StatisticsRequest extends FormRequest
+class UnregisterUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +24,6 @@ class StatisticsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'last_n_date'=> 'nullable|in:7,14,30,90'
 
         ];
     }
