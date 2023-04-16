@@ -89,10 +89,9 @@ Route::group(['prefix'=>'/video'],function ($router){
 
     $router->match(['get','post'], '/{video}/unlike', [VideoController::class, 'unlike'])->name('video.unlike');
 
-
     $router->get('/', [VideoController::class, 'list'])->name('video.list');
 
-    $router->get('/{video}', [VideoController::class, 'show'])->name('video.show');
+
 
 
 
@@ -113,8 +112,14 @@ Route::group(['prefix'=>'/video'],function ($router){
 
     $router->get('/{video}/statistics', [VideoController::class, 'statistics'])->middleware('auth:api')->name('video.statistics');
 
+    $router->get('/favourites', [VideoController::class, 'favourites'])->middleware('auth:api')->name('video.favourites');
+
     $router->delete('/{video}', [VideoController::class, 'delete'])->middleware('auth:api')->name('video.delete');
 
+
+
+
+    $router->get('/{video}', [VideoController::class, 'show'])->name('video.show');
 
 
 
@@ -140,9 +145,14 @@ Route::group(['prefix'=>'/playlist'],function ($router){
 
     $router->get('/my', [PlaylistController::class, 'my'])->middleware('auth:api')->name('playlist.my');
 
+    $router->get('/{playlist}', [PlaylistController::class, 'show'])->middleware('auth:api')->name('playlist.show');
+
     $router->post('/create', [PlaylistController::class, 'create'])->middleware('auth:api')->name('playlist.create');
 
+    $router->match(['post','put'],'/{playlist}/sort', [PlaylistController::class, 'sortVideos'])->middleware('auth:api')->name('playlist.sort');
+
     $router->match(['post','put'],'/{playlist}/{video}', [PlaylistController::class, 'addVideo'])->middleware('auth:api')->name('playlist.add-video');
+
 
 });
 

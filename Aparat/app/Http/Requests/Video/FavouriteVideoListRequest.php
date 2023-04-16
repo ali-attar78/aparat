@@ -1,20 +1,24 @@
 <?php
 
-namespace App\Http\Requests\Playlist;
+namespace App\Http\Requests\Video;
 
-use App\Rules\UniqueForUser;
+use App\Models\Video;
+use App\Rules\CategoryId;
+use App\Rules\OwnPlaylistId;
+use App\Rules\UploadedVideoBannerId;
+use App\Rules\UploadedVideoId;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 
-class AddVideoToPlaylistRequest extends FormRequest
+class FavouriteVideoListRequest extends FormRequest
 {
-
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return Gate::allows('addVideo',[$this->playlist,$this->video]);
+        return true;
+
     }
 
     /**
@@ -25,6 +29,7 @@ class AddVideoToPlaylistRequest extends FormRequest
     public function rules(): array
     {
         return [
-        ];
+
+            ];
     }
 }

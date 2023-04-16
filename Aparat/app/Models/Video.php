@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class Video extends Model
@@ -35,7 +36,7 @@ class Video extends Model
 
     public function playlist()
     {
-        return $this->belongsToMany(Playlist::class,'playlist_videos')->first();
+        return $this->belongsToMany(Playlist::class,'playlist_videos')->take(1);
     }
 
     public function tags()
@@ -59,6 +60,21 @@ class Video extends Model
         return $this->hasMany(Comment::class);
     }
 
+    public function related()
+    {
+        return static::selectRaw('COUNT(*) related_tags,videos.*')
+            ->leftJoin('video_tags','videos.id','=','video_tags.video_id')
+            ->whereRaw('videos.id != ' . $this->id)
+            ->whereRaw("videos.state ='". self::STATE_ACCEPTED ."'")
+            ->whereIn(DB::raw('video_tags.tag_id'),function ($query){
+                $query->selectRaw('video_tags.tag_id')
+                ->from('videos')
+                    ->leftJoin('video_tags','videos.id','=','video_tags.video_id')
+                    ->whereRaw('videos.id='. $this->id);
+            })
+            ->groupBy(DB::raw('videos.id'))
+            ->orderBy('related_tags','desc');
+    }
 
     public function getVideoLinkAttribute()
     {
@@ -77,20 +93,10 @@ class Video extends Model
     {
         $data=parent::toArray();
 
-        $conditions=[
-            'video_id'=> $this->id,
-            'user_id'=>auth('api')->check() ? auth('api')->id() : null,
 
-        ];
-
-        if (!auth('api')->check()){
-            $conditions['user_ip'] = client_ip();
-        }
         $data['link'] = $this->video_link;
         $data['banner_link'] = $this->banner_link;
-        $data['liked'] = VideoFavourite::where($conditions)->count();
         $data['views'] = VideoView::where(['video_id'=> $this->id])->count();
-        $data['tags'] = $this->tags;
 
         return $data;
 

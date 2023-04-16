@@ -8,6 +8,8 @@ namespace App\Services;
  use App\Events\UploadNewVideo;
  use App\Events\VisitVideo;
  use App\Http\Requests\Video\ChangeStateVideoRequest;
+ use App\Http\Requests\Video\FavouriteVideoListRequest;
+ use App\Http\Requests\Video\ShowCommentVideoRequest;
  use App\Http\Requests\Video\CreateVideoRequest;
  use App\Http\Requests\Video\DeleteVideoRequest;
  use App\Http\Requests\Video\LikedByCurrentUserVideoRequest;
@@ -229,7 +231,31 @@ namespace App\Services;
      public static function show(ShowVideoRequest $request)
      {
          event(new VisitVideo($request->video));
-         return $request->video;
+
+         $videoData = $request->video->toArray();
+
+         $conditions=[
+             'video_id'=> $request->video->id,
+             'user_id'=>auth('api')->check() ? auth('api')->id() : null,
+
+         ];
+
+         if (!auth('api')->check()){
+             $conditions['user_ip'] = client_ip();
+         }
+
+         $videoData['liked'] = VideoFavourite::where($conditions)->count();
+         $videoData['tags'] = $request->video->tags;
+         $videoData['comments'] = sort_comments($request->video->comments,null);
+
+         $videoData['related_videos'] =$request->video->related()->take(5)->get();
+
+         $videoData['playlist'] =$request->video->playlist()
+             ->with('videos')
+             ->first();
+
+
+         return $videoData;
      }
 
      public static function delete(DeleteVideoRequest $request)
@@ -313,5 +339,29 @@ namespace App\Services;
 
 
      }
+
+     public static function favourites(FavouriteVideoListRequest $request)
+     {
+
+         $videos = $request->user()
+             ->favouriteVideos()
+             ->selectRaw('videos.*,channels.name channel_name')
+             ->leftJoin('channels','channels.user_id','=' , 'videos.user_id')
+             ->get();
+
+         return[
+           'videos'=>$videos,
+           'total_fav_videos' => count($videos),
+           'total_videos' => $request->user()->channelVideos()->count(),
+           'total_comments' => Video::channelComments($request->user()->id)
+             ->selectRaw('comments.*')
+             ->count(),
+             'total_views'=>Video::views($request->user()->id)->count()
+
+         ];
+
+
+     }
+
 
  }

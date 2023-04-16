@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Video\ChangeStateVideoRequest;
+use App\Http\Requests\Video\FavouriteVideoListRequest;
+use App\Http\Requests\Video\ShowCommentVideoRequest;
 use App\Http\Requests\Video\CreateVideoRequest;
 use App\Http\Requests\Video\DeleteVideoRequest;
 use App\Http\Requests\Video\LikedByCurrentUserVideoRequest;
@@ -83,6 +85,13 @@ class VideoController extends Controller
     {
         return VideoService::update($request);
     }
+
+    public function favourites(FavouriteVideoListRequest $request)
+    {
+        return VideoService::favourites($request);
+    }
+
+
 
 
 

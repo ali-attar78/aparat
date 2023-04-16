@@ -13,7 +13,8 @@ class Playlist extends Model
     protected $fillable = ['user_id','title'];
 
     public function videos(){
-        return $this->belongsToMany(Video::class,'playlist_videos');
+        return $this->belongsToMany(Video::class,'playlist_videos')
+            ->orderBy('playlist_videos.id');
     }
 
     public function user(){
